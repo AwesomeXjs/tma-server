@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 
+	"github.com/AwesomeXjs/tma-server/internal/client/redis"
+	"github.com/AwesomeXjs/tma-server/internal/client/redis/go_redis"
 	"github.com/AwesomeXjs/tma-server/internal/config"
 	"github.com/AwesomeXjs/tma-server/internal/controller"
 	"github.com/AwesomeXjs/tma-server/internal/repository"
@@ -15,10 +17,12 @@ import (
 )
 
 type ServiceProvider struct {
-	httpConfig config.IHTTPConfig
-	dbConfig   config.PGConfig
+	httpConfig  config.IHTTPConfig
+	dbConfig    config.PGConfig
+	redisConfig redis.IRedisConfig
 
-	dbClient dbClient.Client
+	dbClient    dbClient.Client
+	redisClient redis.IRedis
 
 	controller *controller.Controller
 	svc        service.IService
@@ -53,6 +57,34 @@ func (s *ServiceProvider) PGConfig() config.PGConfig {
 	return s.dbConfig
 }
 
+func (s *ServiceProvider) RedisConfig() redis.IRedisConfig {
+	if s.redisConfig == nil {
+		cfg, err := redis.NewRedisConfig()
+		if err != nil {
+			logger.Fatal("failed to get redis config", zap.Error(err))
+		}
+		s.redisConfig = cfg
+	}
+	return s.redisConfig
+}
+
+// RedisClient initializes and returns the Redis client if not already created.
+// It also pings Redis to ensure the connection is valid.
+func (s *ServiceProvider) RedisClient(ctx context.Context) redis.IRedis {
+	if s.redisClient == nil {
+		redisClient := go_redis.NewGoRedisClient(s.RedisConfig())
+		closer.Add(redisClient.Client.Close)
+
+		err := redisClient.Client.Ping(ctx).Err()
+		if err != nil {
+			logger.Error("Failed to connect to redis", zap.Error(err))
+		}
+
+		s.redisClient = redisClient
+	}
+	return s.redisClient
+}
+
 // DBClient initializes and returns the database client if not already created.
 // It also pings the database to ensure the connection is valid.
 func (s *ServiceProvider) DBClient(ctx context.Context) dbClient.Client {
@@ -76,7 +108,7 @@ func (s *ServiceProvider) DBClient(ctx context.Context) dbClient.Client {
 
 func (s *ServiceProvider) Repository(ctx context.Context) repository.IRepository {
 	if s.repo == nil {
-		s.repo = repository.New(s.DBClient(ctx))
+		s.repo = repository.New(s.DBClient(ctx), s.RedisClient(ctx))
 	}
 	return s.repo
 }

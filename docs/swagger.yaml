@@ -1,0 +1,100 @@
+basePath: /
+definitions:
+  model.CreatePortfolioSchema:
+    properties:
+      name:
+        type: string
+      owner_id:
+        type: integer
+    type: object
+  model.User:
+    properties:
+      firstName:
+        type: string
+      id:
+        type: integer
+      isPremium:
+        type: integer
+      lastName:
+        type: string
+      username:
+        type: string
+    type: object
+  response.Body:
+    properties:
+      detail:
+        type: string
+      request:
+        type: string
+      time:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for Authentication
+  title: TMA API
+  version: "1.0"
+paths:
+  /api/v1/create-portfolio:
+    post:
+      consumes:
+      - application/json
+      description: create portfolio for user
+      operationId: create-portfolio
+      parameters:
+      - description: portfolio info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreatePortfolioSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Body'
+      summary: CreatePortfolio
+      tags:
+      - Portfolio
+  /api/v1/registration:
+    post:
+      consumes:
+      - application/json
+      description: Registration new user
+      operationId: registration
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Body'
+      summary: Registration
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: TMA
+    type: apiKey
+swagger: "2.0"

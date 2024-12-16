@@ -17,6 +17,9 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/swaggo/swag/cmd/swag@latest # swagger
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@v3.14.0 # migrations
 
+swag-instal:
+	GOBIN=$(LOCAL_BIN) go install github.com/swaggo/swag/cmd/swag@latest
+
 
 swagger:
 	$(LOCAL_BIN)/swag init -g cmd/app/main.go
@@ -29,7 +32,7 @@ LOCAL_MIGRATION_DSN="host=localhost port=$(POSTGRES_PORT) dbname=$(POSTGRES_DB) 
 local-migration-status:
 	${LOCAL_BIN}/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
 
-local-migration-up:
+migrate:
 	${LOCAL_BIN}/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} up -v
 
 local-migration-down:
