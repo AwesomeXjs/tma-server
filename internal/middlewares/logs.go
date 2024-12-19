@@ -12,6 +12,7 @@ import (
 // It logs the request method, path, and duration. In case of an error, it also logs the error details.
 func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		r := c.Request()
 		start := time.Now()
 
 		err := next(c)
@@ -19,14 +20,14 @@ func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			logger.Error("Failed to process request",
 				zap.Error(err),
-				zap.String("method", c.Request().Method),
-				zap.String("path", c.Request().URL.Path),
+				zap.String("method", r.Method),
+				zap.String("path", r.URL.Path),
 				zap.Duration("duration", time.Since(start)))
 		}
 
 		logger.Info("Request details",
-			zap.String("method", c.Request().Method),
-			zap.String("path", c.Request().URL.Path),
+			zap.String("method", r.Method),
+			zap.String("path", r.URL.Path),
 			zap.Duration("duration", time.Since(start)),
 		)
 

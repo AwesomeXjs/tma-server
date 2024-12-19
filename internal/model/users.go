@@ -1,9 +1,9 @@
 package model
 
 type User struct {
-	ID        int    `json:"id"`
-	Username  string `json:"username"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	IsPremium int    `json:"isPremium"`
+	ID        int    `json:"id" example:"51"`
+	Username  string `json:"username" example:"username"`
+	FirstName string `json:"firstName" example:"firstName"`
+	LastName  string `json:"lastName" example:"lastName"`
+	IsPremium int    `json:"isPremium" example:"0"`
 }

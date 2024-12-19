@@ -15,6 +15,6 @@ type Portfolio struct {
 }
 
 type CreatePortfolioSchema struct {
-	Name    string `json:"name" db:"name"`
-	OwnerID int    `json:"owner_id" db:"owner_id"`
+	Name    string `json:"name" db:"name" example:"Portfolio"`
+	OwnerID int    `json:"owner_id" db:"owner_id" example:"518774723"`
 }

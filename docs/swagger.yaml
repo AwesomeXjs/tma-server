@@ -3,8 +3,10 @@ definitions:
   model.CreatePortfolioSchema:
     properties:
       name:
+        example: Portfolio
         type: string
       owner_id:
+        example: 518774723
         type: integer
     type: object
   model.User:

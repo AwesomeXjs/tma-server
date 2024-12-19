@@ -99,7 +99,7 @@ func (app *App) InitEchoServer(_ context.Context) error {
 			echo.HeaderAccessControlAllowOrigin,
 		}, // Allowed headers for CORS
 	}))
-	app.server.Use(middlewares.TelegramValidationMiddleware(os.Getenv("REAL_BOT_TOKEN"))) // Middleware for validating requests.
+	app.server.Use(middlewares.TelegramValidationMiddleware(os.Getenv("TEST_BOT_TOKEN"))) // Middleware for validating requests.
 	return nil
 }
 

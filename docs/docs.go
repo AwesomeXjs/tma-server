@@ -103,10 +103,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Portfolio"
                 },
                 "owner_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 518774723
                 }
             }
         },
