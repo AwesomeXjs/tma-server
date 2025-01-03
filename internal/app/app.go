@@ -116,12 +116,21 @@ func (app *App) runHTTPServer() error {
 
 // InitRoutes sets up the application routes.
 func (app *App) InitRoutes(ctx context.Context, server *echo.Echo) {
+	app.ServiceProvider.Controller(ctx).InitRoutes(server, checkMode(mode)) // Initialize routes using the controller
+}
+
+func checkMode(mode *string) string {
 	var token string
-	if *mode == "dev" {
+	switch *mode {
+	case "dev":
+		logger.Warn("DEV MODE ACTIVATED")
 		token = os.Getenv("TEST_BOT_TOKEN")
-	} else {
+	case "prod":
+		logger.Warn("PRODUCTION MODE ACTIVATED")
 		token = os.Getenv("REAL_BOT_TOKEN")
+	default:
+		token = os.Getenv("TEST_BOT_TOKEN")
 	}
-	fmt.Println(*mode)
-	app.ServiceProvider.Controller(ctx).InitRoutes(server, token) // Initialize routes using the controller
+
+	return token
 }
