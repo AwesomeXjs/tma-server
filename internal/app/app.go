@@ -21,6 +21,7 @@ const (
 
 // logLevel is a command-line flag for specifying the log level.
 var logLevel = flag.String("l", "info", "log level")
+var mode = flag.String("m", "dev", "build mode")
 
 type App struct {
 	ServiceProvider *ServiceProvider
@@ -99,7 +100,6 @@ func (app *App) InitEchoServer(_ context.Context) error {
 			echo.HeaderAccessControlAllowOrigin,
 		}, // Allowed headers for CORS
 	}))
-	app.server.Use(middlewares.TelegramValidationMiddleware(os.Getenv("REAL_BOT_TOKEN"))) // Middleware for validating requests.
 	return nil
 }
 
@@ -116,5 +116,12 @@ func (app *App) runHTTPServer() error {
 
 // InitRoutes sets up the application routes.
 func (app *App) InitRoutes(ctx context.Context, server *echo.Echo) {
-	app.ServiceProvider.Controller(ctx).InitRoutes(server) // Initialize routes using the controller
+	var token string
+	if *mode == "dev" {
+		token = os.Getenv("TEST_BOT_TOKEN")
+	} else {
+		token = os.Getenv("REAL_BOT_TOKEN")
+	}
+	fmt.Println(*mode)
+	app.ServiceProvider.Controller(ctx).InitRoutes(server, token) // Initialize routes using the controller
 }

@@ -2,7 +2,10 @@ include .env
 LOCAL_BIN:=$(CURDIR)/bin
 
 run:
-	go run cmd/app/main.go
+	go run cmd/app/main.go -m dev
+
+run-prod:
+	go run cmd/app/main.go -m prod
 
 run-debug:
 	go run cmd/app/main.go -l debug

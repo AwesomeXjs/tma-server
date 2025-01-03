@@ -35,11 +35,7 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 
 			// Извлекаем строку данных и хэш
 			dataCheckString := dataUrl[0]
-			fmt.Println("data checking string: ", dataCheckString)
-
 			receivedHash := dataUrl[1]
-			fmt.Println("hash: ", receivedHash)
-
 			// Проверяем хэш
 			if !validateHash(dataCheckString, receivedHash, botToken) {
 				return c.JSON(http.StatusUnauthorized, map[string]string{"error": "invalid hash"})
