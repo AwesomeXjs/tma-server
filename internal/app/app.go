@@ -131,6 +131,5 @@ func checkMode(mode *string) string {
 	default:
 		token = os.Getenv("TEST_BOT_TOKEN")
 	}
-
 	return token
 }

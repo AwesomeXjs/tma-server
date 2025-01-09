@@ -22,11 +22,6 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 				return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 			}
 
-			fmt.Println("dataUrl: ", dataUrl)
-
-			// Логируем для отладки
-			fmt.Println("Received dataUrl:", dataUrl)
-
 			// Ожидаем, что первый элемент — это строка данных, а второй — хэш
 			if len(dataUrl) != 2 {
 				// Логируем ошибку, если формат данных неверный
@@ -57,10 +52,6 @@ func validateHash(dataCheckString, receivedHash, botToken string) bool {
 
 	// Преобразуем вычисленный хэш в строку
 	calculatedHashHex := hex.EncodeToString(calculatedHash)
-
-	// Логирование для дебага
-	fmt.Println("Calculated Hash:", calculatedHashHex)
-	fmt.Println("Received Hash:", receivedHash)
 
 	// Сравнение вычисленного хэша с полученным
 	return strings.EqualFold(calculatedHashHex, receivedHash)
