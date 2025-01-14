@@ -22,16 +22,18 @@ import (
 // @Failure 400 {object} response.Body
 // @Router /api/v1/create-portfolio [post]
 func (c *Controller) CreatePortfolio(ctx echo.Context) error {
+	const mark = "Controller.CreatePortfolio"
+
 	var Request model.Portfolio
 
 	err := ctx.Bind(&Request)
 	if err != nil {
-		logger.Error("failed to bind request", zap.Error(err))
+		logger.Error("failed to bind request", mark, zap.Error(err))
 		return response.Response(ctx, http.StatusBadRequest, "bad request 123", err.Error())
 	}
 	err = c.svc.CreatePortfolio(ctx.Request().Context(), &Request)
 	if err != nil {
-		logger.Error("failed to create portfolio", zap.Error(err))
+		logger.Error("failed to create portfolio", mark, zap.Error(err))
 		return response.Response(ctx, http.StatusBadRequest, "bad request 321", err.Error())
 	}
 

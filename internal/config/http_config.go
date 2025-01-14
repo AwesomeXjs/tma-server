@@ -33,11 +33,12 @@ type HTTPConfig struct {
 // NewHTTPConfig creates and returns a new instance of HttpConfig.
 // It reads the HTTP host and port from environment variables and returns an error if either is missing.
 func NewHTTPConfig() (*HTTPConfig, error) {
+	const mark = "Config.HTTPConfig"
 	// Retrieve the HTTP host from environment variables.
 	host := os.Getenv(HTTPHost)
 	if len(host) == 0 {
 		// Log an error if the host is not set.
-		logger.Error("failed to get http host", zap.String("http host", HTTPHost))
+		logger.Error("failed to get http host", mark, zap.String("http host", HTTPHost))
 		return nil, fmt.Errorf("env %s is empty", HTTPHost)
 	}
 
@@ -45,7 +46,7 @@ func NewHTTPConfig() (*HTTPConfig, error) {
 	port := os.Getenv(HTTPPort)
 	if len(port) == 0 {
 		// Log an error if the port is not set.
-		logger.Error("failed to get http port", zap.String("http port", HTTPPort))
+		logger.Error("failed to get http port", mark, zap.String("http port", HTTPPort))
 		return nil, fmt.Errorf("env %s is empty", HTTPPort)
 	}
 

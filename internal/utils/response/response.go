@@ -20,6 +20,7 @@ type Body struct {
 // Response is a utility function to send JSON responses.
 // It accepts the HTTP context, a status code, a message, and detailed information to send in the response.
 func Response(ctx echo.Context, statusCode int, message, detail string) error {
+	const mark = "Response Wrapper"
 	// Construct the response object using the provided parameters.
 	err := ctx.JSON(statusCode, Body{
 		Title:   message,
@@ -30,7 +31,7 @@ func Response(ctx echo.Context, statusCode int, message, detail string) error {
 
 	// If there's an error in writing the response, log it and return the error.
 	if err != nil {
-		logger.Info("failed to write response", zap.String("error", err.Error()))
+		logger.Error("failed to write response", mark, zap.String("error", err.Error()))
 		return err
 	}
 

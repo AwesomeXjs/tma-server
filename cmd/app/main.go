@@ -8,6 +8,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	MarkMain = "Main"
+)
+
 // @title TMA API
 // @version 1.0
 // @description API Server for Authentication
@@ -21,11 +25,11 @@ func main() {
 
 	myApp, err := app.New(ctx)
 	if err != nil {
-		logger.Fatal("failed to init app", zap.Error(err))
+		logger.Fatal("failed to init app", MarkMain, zap.Error(err))
 	}
 
 	err = myApp.Run()
 	if err != nil {
-		logger.Fatal("failed to run app", zap.Error(err))
+		logger.Fatal("failed to run app", MarkMain, zap.Error(err))
 	}
 }

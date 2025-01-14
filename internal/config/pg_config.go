@@ -27,9 +27,10 @@ type pgConfig struct {
 // NewPgConfig creates a new PGConfig instance by reading the DSN from environment variables.
 // It returns an error if the DSN is not set.
 func NewPgConfig() (PGConfig, error) {
+	const mark = "Config.PGConfig"
 	dsn := os.Getenv(PgDsn)
 	if len(dsn) == 0 {
-		logger.Error("failed to get db dsn", zap.String("db dsn", PgDsn))
+		logger.Error("failed to get db dsn", mark, zap.String("db dsn", PgDsn))
 		return nil, fmt.Errorf("env %s is empty", PgDsn)
 	}
 

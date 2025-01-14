@@ -30,15 +30,19 @@ type App struct {
 
 // New creates and initializes the App with dependencies.
 func New(ctx context.Context) (*App, error) {
+	const mark = "App.App.New"
+
 	app := &App{}
 	err := app.InitDeps(ctx)
 	if err != nil {
 		// Fatal log in case of failure during dependency initialization
-		logger.Fatal("failed to init deps", zap.Error(err))
+		logger.Fatal("failed to init deps", mark, zap.Error(err))
 	}
 	return app, nil
 }
 func (app *App) InitDeps(ctx context.Context) error {
+	const mark = "App.App.InitDeps"
+
 	inits := []func(ctx context.Context) error{
 		app.InitConfig,
 		app.initServiceProvider,
@@ -46,7 +50,7 @@ func (app *App) InitDeps(ctx context.Context) error {
 	}
 	for _, fun := range inits {
 		if err := fun(ctx); err != nil {
-			logger.Error("failed to init deps", zap.Error(err))
+			logger.Error("failed to init deps", mark, zap.Error(err))
 			return err
 		}
 	}
@@ -57,22 +61,26 @@ func (app *App) InitDeps(ctx context.Context) error {
 
 // Run starts the HTTP server and handles cleanup on shutdown.
 func (app *App) Run() error {
+	const mark = "App.App.Run"
+
 	defer func() {
 		closer.CloseAll() // Close all services/resources
 		closer.Wait()     // Wait for all services to close
 	}()
 	err := app.runHTTPServer() // Run the HTTP server
 	if err != nil {
-		logger.Fatal("failed to run http server", zap.Error(err))
+		logger.Fatal("failed to run http server", mark, zap.Error(err))
 	}
 	return nil
 }
 
 // InitConfig loads environment variables for the application.
 func (app *App) InitConfig(_ context.Context) error {
+	const mark = "App.App.InitConfig"
+
 	err := godotenv.Load(EnvPath)
 	if err != nil {
-		logger.Error("Error loading .env file", zap.String("path", EnvPath))
+		logger.Error("Error loading .env file", mark, zap.String("path", EnvPath))
 		return fmt.Errorf("error loading .env file: %v", err)
 	}
 	return err
@@ -110,8 +118,10 @@ func (app *App) initServiceProvider(_ context.Context) error {
 
 // runHTTPServer starts the Echo server and listens for requests.
 func (app *App) runHTTPServer() error {
-	logger.Info("server listening at %v", zap.String("start", app.ServiceProvider.HTTPConfig().Address())) // Log the server address
-	return app.server.Start(app.ServiceProvider.HTTPConfig().Address())                                    // Start the server at the configured address
+	const mark = "App.App.runHTTPServer"
+
+	logger.Info("server listening at %v", mark, zap.String("start", app.ServiceProvider.HTTPConfig().Address())) // Log the server address
+	return app.server.Start(app.ServiceProvider.HTTPConfig().Address())                                          // Start the server at the configured address
 }
 
 // InitRoutes sets up the application routes.
@@ -120,13 +130,15 @@ func (app *App) InitRoutes(ctx context.Context, server *echo.Echo) {
 }
 
 func checkMode(mode *string) string {
+	const mark = "App.App.checkMode"
+
 	var token string
 	switch *mode {
 	case "dev":
-		logger.Warn("DEV MODE ACTIVATED")
+		logger.Warn("DEV MODE ACTIVATED", mark)
 		token = os.Getenv("TEST_BOT_TOKEN")
 	case "prod":
-		logger.Warn("PRODUCTION MODE ACTIVATED")
+		logger.Warn("PRODUCTION MODE ACTIVATED", mark)
 		token = os.Getenv("REAL_BOT_TOKEN")
 	default:
 		token = os.Getenv("TEST_BOT_TOKEN")

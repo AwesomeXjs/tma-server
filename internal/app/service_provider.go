@@ -35,10 +35,12 @@ func NewServiceProvider() *ServiceProvider {
 
 // HTTPConfig returns the HTTP configuration, initializing it if necessary.
 func (s *ServiceProvider) HTTPConfig() config.IHTTPConfig {
+	const mark = "App.ServiceProvider.HTTPConfig"
+
 	if s.httpConfig == nil {
 		cfg, err := config.NewHTTPConfig()
 		if err != nil {
-			logger.Fatal("failed to get http config", zap.Error(err))
+			logger.Fatal("failed to get http config", mark, zap.Error(err))
 		}
 		s.httpConfig = cfg
 	}
@@ -47,10 +49,12 @@ func (s *ServiceProvider) HTTPConfig() config.IHTTPConfig {
 
 // PGConfig initializes and returns the PostgresSQL configuration if not already set.
 func (s *ServiceProvider) PGConfig() config.PGConfig {
+	const mark = "App.ServiceProvider.PGConfig"
+
 	if s.dbConfig == nil {
 		cfg, err := config.NewPgConfig()
 		if err != nil {
-			logger.Fatal("failed to get pg config", zap.Error(err))
+			logger.Fatal("failed to get pg config", mark, zap.Error(err))
 		}
 		s.dbConfig = cfg
 	}
@@ -58,10 +62,12 @@ func (s *ServiceProvider) PGConfig() config.PGConfig {
 }
 
 func (s *ServiceProvider) RedisConfig() redis.IRedisConfig {
+	const mark = "App.ServiceProvider.RedisConfig"
+
 	if s.redisConfig == nil {
 		cfg, err := redis.NewRedisConfig()
 		if err != nil {
-			logger.Fatal("failed to get redis config", zap.Error(err))
+			logger.Fatal("failed to get redis config", mark, zap.Error(err))
 		}
 		s.redisConfig = cfg
 	}
@@ -71,13 +77,15 @@ func (s *ServiceProvider) RedisConfig() redis.IRedisConfig {
 // RedisClient initializes and returns the Redis client if not already created.
 // It also pings Redis to ensure the connection is valid.
 func (s *ServiceProvider) RedisClient(ctx context.Context) redis.IRedis {
+	const mark = "App.ServiceProvider.RedisClient"
+
 	if s.redisClient == nil {
 		redisClient := go_redis.NewGoRedisClient(s.RedisConfig())
 		closer.Add(redisClient.Client.Close)
 
 		err := redisClient.Client.Ping(ctx).Err()
 		if err != nil {
-			logger.Error("Failed to connect to redis", zap.Error(err))
+			logger.Error("Failed to connect to redis", mark, zap.Error(err))
 		}
 
 		s.redisClient = redisClient
@@ -88,16 +96,18 @@ func (s *ServiceProvider) RedisClient(ctx context.Context) redis.IRedis {
 // DBClient initializes and returns the database client if not already created.
 // It also pings the database to ensure the connection is valid.
 func (s *ServiceProvider) DBClient(ctx context.Context) dbClient.Client {
+	const mark = "App.ServiceProvider.DBClient"
+
 	if s.dbClient == nil {
 		cfg := s.PGConfig()
 		dbc, err := pg.New(ctx, cfg.GetDSN())
 		if err != nil {
-			logger.Fatal("failed to get db client", zap.Error(err))
+			logger.Fatal("failed to get db client", mark, zap.Error(err))
 		}
 
 		err = dbc.DB().Ping(ctx)
 		if err != nil {
-			logger.Fatal("failed to ping db", zap.Error(err))
+			logger.Fatal("failed to ping db", mark, zap.Error(err))
 		}
 
 		closer.Add(dbc.Close) // Ensures the database client is closed on shutdown

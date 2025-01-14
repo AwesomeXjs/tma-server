@@ -11,6 +11,8 @@ import (
 )
 
 func (r *Repository) CreatePortfolio(ctx context.Context, user *model.Portfolio) error {
+	const mark = "Repository.CreatePortfolio"
+
 	builderInsert := squirrel.Insert(tablePortfolios).
 		PlaceholderFormat(squirrel.Dollar).
 		Columns(columnName, columnOwnerID).
@@ -18,7 +20,7 @@ func (r *Repository) CreatePortfolio(ctx context.Context, user *model.Portfolio)
 
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
-		logger.Error("failed to build insert query", zap.Error(err))
+		logger.Error("failed to build insert query", mark, zap.Error(err))
 		return err
 	}
 
@@ -29,7 +31,7 @@ func (r *Repository) CreatePortfolio(ctx context.Context, user *model.Portfolio)
 
 	_, err = r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
-		logger.Error("failed to create portfolio", zap.Error(err))
+		logger.Error("failed to create portfolio", mark, zap.Error(err))
 		return err
 	}
 

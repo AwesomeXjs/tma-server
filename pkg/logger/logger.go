@@ -14,27 +14,32 @@ func Init(core zapcore.Core, options ...zap.Option) {
 }
 
 // Debug logs a debug message with optional fields using the global logger.
-func Debug(msg string, fields ...zap.Field) {
+func Debug(msg string, placeInCode string, fields ...zap.Field) {
+	fields = append(fields, zap.String("placeInCode: ", placeInCode))
 	globalLogger.Debug(msg, fields...)
 }
 
 // Info logs an informational message with optional fields using the global logger.
-func Info(msg string, fields ...zap.Field) {
+func Info(msg string, placeInCode string, fields ...zap.Field) {
+	fields = append(fields, zap.String("place_in_code: ", placeInCode))
 	globalLogger.Info(msg, fields...)
 }
 
 // Warn logs a warning message with optional fields using the global logger.
-func Warn(msg string, fields ...zap.Field) {
+func Warn(msg string, placeInCode string, fields ...zap.Field) {
+	fields = append(fields, zap.String("place_in_code: ", placeInCode))
 	globalLogger.Warn(msg, fields...)
 }
 
 // Error logs an error message with optional fields using the global logger.
-func Error(msg string, fields ...zap.Field) {
+func Error(msg string, placeInCode string, fields ...zap.Field) {
+	fields = append(fields, zap.String("place_in_code: ", placeInCode))
 	globalLogger.Error(msg, fields...)
 }
 
 // Fatal logs a fatal error message with optional fields and then terminates the application.
-func Fatal(msg string, fields ...zap.Field) {
+func Fatal(msg string, placeInCode string, fields ...zap.Field) {
+	fields = append(fields, zap.String("place_in_code: ", placeInCode))
 	globalLogger.Fatal(msg, fields...)
 }
 

@@ -22,16 +22,18 @@ import (
 // @Failure 400 {object} response.Body
 // @Router /api/v1/registration [post]
 func (c *Controller) Registration(ctx echo.Context) error {
+	const mark = "Controller.Registration"
+
 	var User model.User
 	err := ctx.Bind(&User)
 	if err != nil {
-		logger.Error("failed to bind user", zap.Error(err))
+		logger.Error("failed to bind user", mark, zap.Error(err))
 		return response.Response(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
-
+	
 	err = c.svc.Registration(ctx.Request().Context(), &User)
 	if err != nil {
-		logger.Error("failed to register user", zap.Error(err))
+		logger.Error("failed to register user", mark, zap.Error(err))
 		return response.Response(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
 
