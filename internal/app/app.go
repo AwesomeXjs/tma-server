@@ -64,9 +64,10 @@ func (app *App) Run() error {
 	const mark = "App.App.Run"
 
 	defer func() {
-		closer.CloseAll() // Close all services/resources
-		closer.Wait()     // Wait for all services to close
+		closer.CloseAll()
+		closer.Wait()
 	}()
+
 	err := app.runHTTPServer() // Run the HTTP server
 	if err != nil {
 		logger.Fatal("failed to run http server", mark, zap.Error(err))

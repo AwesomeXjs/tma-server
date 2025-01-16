@@ -15,6 +15,7 @@ import (
 
 func (r *Repository) Registration(ctx context.Context, user *model.User) error {
 	const mark = "Repository.Registration"
+
 	_, err := r.cache.Get(ctx, strconv.Itoa(user.ID))
 	if err == nil {
 		logger.Warn("user already registered (info from cache)", mark, zap.String("username", user.Username))

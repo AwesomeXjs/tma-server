@@ -3,11 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/goccy/go-json"
-	"log"
-	"os"
-	"os/signal"
-
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 type MarkPriceUpdate struct {
@@ -26,16 +23,11 @@ func main() {
 	}
 	defer conn.Close()
 
-	// Канал для обработки сигналов завершения программы
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
+	myData := []string{"BTCUSDT", "ETHUSDT", "EOSUSDT"}
 
 	// Чтение сообщений
-	done := make(chan struct{})
 	go func() {
-		defer close(done)
 		for {
-
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				log.Println("Ошибка чтения сообщения:", err)
@@ -51,28 +43,17 @@ func main() {
 				log.Println("Ошибка парсинга JSON:", err)
 				continue
 			}
-			fmt.Println(len(update))
+			i := 0
 			for _, el := range update {
-				if el.Ticker == "BTCUSDT" || el.Ticker == "ETHUSDT" || el.Ticker == "EOSUSDT" {
-					fmt.Println(el.Ticker, " : ", el.PriceChange)
+				if i < len(myData) && el.Ticker == myData[i] {
+					fmt.Printf("Тикер: %s, Цена: %s\n", el.Ticker, el.PriceChange)
+					i++
 				}
 			}
 		}
 	}()
 
+	select {}
+
 	// Обработка завершения программы
-	for {
-		select {
-		case <-done:
-			return
-		case <-interrupt:
-			log.Println("Получен сигнал завершения, закрытие соединения...")
-			err := conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("Ошибка при отправке сообщения закрытия:", err)
-				return
-			}
-			return
-		}
-	}
 }

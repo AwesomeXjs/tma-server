@@ -4,28 +4,31 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
+	"github.com/AwesomeXjs/tma-server/internal/utils/response"
+	"github.com/AwesomeXjs/tma-server/pkg/logger"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 	"net/http"
 	"strings"
 )
 
 // TelegramValidationMiddleware возвращает middleware для проверки подписи Telegram Mini App
 func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
+	const mark = "Middleware.TelegramValidation"
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// Получаем тело запроса
 			var dataUrl []string
 			if err := c.Bind(&dataUrl); err != nil {
 				// Логируем ошибку и возвращаем ошибку в ответ
-				fmt.Println("Error binding body:", err)
-				return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+				logger.Error("Error binding body", mark, zap.Error(err))
+				return response.Response(c, http.StatusBadRequest, "bad request", err.Error())
 			}
 
 			// Ожидаем, что первый элемент — это строка данных, а второй — хэш
 			if len(dataUrl) != 2 {
 				// Логируем ошибку, если формат данных неверный
-				return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid data format"})
+				return response.Response(c, http.StatusBadRequest, "bad request", "invalid data format")
 			}
 
 			// Извлекаем строку данных и хэш
@@ -33,7 +36,7 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 			receivedHash := dataUrl[1]
 			// Проверяем хэш
 			if !validateHash(dataCheckString, receivedHash, botToken) {
-				return c.JSON(http.StatusUnauthorized, map[string]string{"error": "invalid hash"})
+				return response.Response(c, http.StatusBadRequest, "bad request", "invalid hash")
 			}
 
 			// Если хэш валиден, продолжаем выполнение
