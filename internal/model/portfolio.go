@@ -18,3 +18,16 @@ type CreatePortfolioSchema struct {
 	Name    string `json:"name" db:"name" example:"Portfolio"`
 	OwnerID int    `json:"owner_id" db:"owner_id" example:"518774723"`
 }
+
+type DeletePortfolioSchema struct {
+	ID int `json:"id" db:"id" example:"1"`
+}
+
+type UpdatePortfolioSchema struct {
+	ID      int    `json:"id" db:"id" example:"1"`
+	NewName string `json:"new_name" db:"name" example:"Portfolio"`
+}
+
+type GetPortfoliosSchema struct {
+	OwnerID int
+}

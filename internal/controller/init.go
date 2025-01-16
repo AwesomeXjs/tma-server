@@ -1,16 +1,25 @@
 package controller
 
-import "github.com/AwesomeXjs/tma-server/internal/service"
+import (
+	"github.com/AwesomeXjs/tma-server/internal/controller/assets"
+	"github.com/AwesomeXjs/tma-server/internal/controller/portfolio"
+	"github.com/AwesomeXjs/tma-server/internal/controller/user"
+	"github.com/AwesomeXjs/tma-server/internal/service"
+)
 
 // Controller handles the authentication and header-related operations.
 type Controller struct {
-	svc service.IService
+	User      user.IUser
+	Portfolio portfolio.IPortfolio
+	Assets    assets.IAssets
 }
 
 // New creates a new instance of the Controller.
 // It takes an authentication client and a header helper as dependencies.
-func New(svc service.IService) *Controller {
+func New(svc *service.Service) *Controller {
 	return &Controller{
-		svc: svc,
+		User:      user.New(svc),
+		Portfolio: portfolio.New(svc),
+		Assets:    assets.New(svc),
 	}
 }

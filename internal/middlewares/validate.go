@@ -4,7 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"github.com/AwesomeXjs/tma-server/internal/utils/response"
+	"github.com/AwesomeXjs/tma-server/internal/utils"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -22,13 +22,13 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 			if err := c.Bind(&dataUrl); err != nil {
 				// Логируем ошибку и возвращаем ошибку в ответ
 				logger.Error("Error binding body", mark, zap.Error(err))
-				return response.Response(c, http.StatusBadRequest, "bad request", err.Error())
+				return utils.Response(c, http.StatusBadRequest, "bad request", err.Error())
 			}
 
 			// Ожидаем, что первый элемент — это строка данных, а второй — хэш
 			if len(dataUrl) != 2 {
 				// Логируем ошибку, если формат данных неверный
-				return response.Response(c, http.StatusBadRequest, "bad request", "invalid data format")
+				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid data format")
 			}
 
 			// Извлекаем строку данных и хэш
@@ -36,7 +36,7 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 			receivedHash := dataUrl[1]
 			// Проверяем хэш
 			if !validateHash(dataCheckString, receivedHash, botToken) {
-				return response.Response(c, http.StatusBadRequest, "bad request", "invalid hash")
+				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid hash")
 			}
 
 			// Если хэш валиден, продолжаем выполнение

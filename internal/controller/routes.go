@@ -32,20 +32,20 @@ func (c *Controller) InitRoutes(server *echo.Echo, botToken string) {
 	{
 		v1 := api.Group(version1)
 		{
-			v1.POST(registration, c.Registration)
+			v1.POST(registration, c.User.Registration)
 
-			secureRoutes := v1.Group("", middlewares.TelegramValidationMiddleware(botToken))
+			secureRoutes := v1.Group("")
 			{
-				secureRoutes.POST(createPortfolio, c.CreatePortfolio)
-				secureRoutes.DELETE(deletePortfolio, c.DeletePortfolio)
-				secureRoutes.PATCH(updatePortfolio, c.UpdatePortfolio)
-				secureRoutes.GET(getPortfolios, c.GetPortfolios)
+				secureRoutes.POST(createPortfolio, c.Portfolio.CreatePortfolio)
+				secureRoutes.DELETE(deletePortfolio, c.Portfolio.DeletePortfolio)
+				secureRoutes.PATCH(updatePortfolio, c.Portfolio.UpdatePortfolio)
+				secureRoutes.GET(getPortfolios, c.Portfolio.GetPortfolios)
 
-				secureRoutes.POST(addAsset, c.AddAssetToPortfolio)
+				secureRoutes.POST(addAsset, c.Assets.AddAssetToPortfolio)
 
 				secureRoutes.POST(test, func(c echo.Context) error {
 					return c.JSON(http.StatusOK, map[string]string{"message": "success"})
-				})
+				}, middlewares.TelegramValidationMiddleware(botToken))
 			}
 
 		}

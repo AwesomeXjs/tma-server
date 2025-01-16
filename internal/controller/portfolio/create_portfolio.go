@@ -1,10 +1,10 @@
-package controller
+package portfolio
 
 import (
+	"github.com/AwesomeXjs/tma-server/internal/utils"
 	"net/http"
 
 	"github.com/AwesomeXjs/tma-server/internal/model"
-	"github.com/AwesomeXjs/tma-server/internal/utils/response"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -21,7 +21,7 @@ import (
 // @Success 200 {object} response.Body
 // @Failure 400 {object} response.Body
 // @Router /api/v1/create-portfolio [post]
-func (c *Controller) CreatePortfolio(ctx echo.Context) error {
+func (p *Portfolio) CreatePortfolio(ctx echo.Context) error {
 	const mark = "Controller.CreatePortfolio"
 
 	var Request model.Portfolio
@@ -29,13 +29,13 @@ func (c *Controller) CreatePortfolio(ctx echo.Context) error {
 	err := ctx.Bind(&Request)
 	if err != nil {
 		logger.Error("failed to bind request", mark, zap.Error(err))
-		return response.Response(ctx, http.StatusBadRequest, "bad request 123", err.Error())
+		return utils.Response(ctx, http.StatusBadRequest, "bad request 123", err.Error())
 	}
-	err = c.svc.CreatePortfolio(ctx.Request().Context(), &Request)
+	err = p.svc.Portfolio.CreatePortfolio(ctx.Request().Context(), &Request)
 	if err != nil {
 		logger.Error("failed to create portfolio", mark, zap.Error(err))
-		return response.Response(ctx, http.StatusBadRequest, "bad request 321", err.Error())
+		return utils.Response(ctx, http.StatusBadRequest, "bad request 321", err.Error())
 	}
 
-	return response.Response(ctx, http.StatusOK, "success", "portfolio created")
+	return utils.Response(ctx, http.StatusOK, "success", "portfolio created")
 }

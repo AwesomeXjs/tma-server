@@ -25,8 +25,8 @@ type ServiceProvider struct {
 	redisClient redis.IRedis
 
 	controller *controller.Controller
-	svc        service.IService
-	repo       repository.IRepository
+	svc        *service.Service
+	repo       *repository.Repository
 }
 
 func NewServiceProvider() *ServiceProvider {
@@ -116,14 +116,14 @@ func (s *ServiceProvider) DBClient(ctx context.Context) dbClient.Client {
 	return s.dbClient
 }
 
-func (s *ServiceProvider) Repository(ctx context.Context) repository.IRepository {
+func (s *ServiceProvider) Repository(ctx context.Context) *repository.Repository {
 	if s.repo == nil {
 		s.repo = repository.New(s.DBClient(ctx), s.RedisClient(ctx))
 	}
 	return s.repo
 }
 
-func (s *ServiceProvider) Service(ctx context.Context) service.IService {
+func (s *ServiceProvider) Service(ctx context.Context) *service.Service {
 	if s.svc == nil {
 		s.svc = service.New(s.Repository(ctx))
 	}

@@ -1,8 +1,7 @@
-package repository
+package portfolio
 
 import (
 	"context"
-
 	"github.com/AwesomeXjs/tma-server/internal/model"
 	"github.com/AwesomeXjs/tma-server/pkg/dbClient"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
@@ -10,12 +9,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *Repository) CreatePortfolio(ctx context.Context, user *model.Portfolio) error {
+func (p *Portfolio) CreatePortfolio(ctx context.Context, user *model.Portfolio) error {
 	const mark = "Repository.CreatePortfolio"
 
-	builderInsert := squirrel.Insert(tablePortfolios).
+	builderInsert := squirrel.Insert(TablePortfolios).
 		PlaceholderFormat(squirrel.Dollar).
-		Columns(columnName, columnOwnerID).
+		Columns(ColumnName, ColumnOwnerID).
 		Values(user.Name, user.OwnerID)
 
 	query, args, err := builderInsert.ToSql()
@@ -29,7 +28,7 @@ func (r *Repository) CreatePortfolio(ctx context.Context, user *model.Portfolio)
 		QueryRaw: query,
 	}
 
-	_, err = r.db.DB().ExecContext(ctx, q, args...)
+	_, err = p.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		logger.Error("failed to create portfolio", mark, zap.Error(err))
 		return err
