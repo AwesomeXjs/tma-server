@@ -19,25 +19,25 @@ import (
 // @ID create-portfolio
 // @Accept  json
 // @Produce  json
-// @Param input body model.CreatePortfolioSchema true "portfolio info"
-// @Success 200 {object} utils.Body
-// @Failure 400 {object} utils.Body
-// @Router /api/v1/create-portfolio [get]
+// @Param input body model.CreatePortfolioRequest true "portfolio info"
+// @Success 200 {object} schema.CreatePortfolio
+// @Failure 400 {object} schema.NoData
+// @Router /api/v1/create-portfolio [post]
 func (p *Portfolio) CreatePortfolio(ctx echo.Context) error {
 	const mark = "Controller.Portfolio.CreatePortfolio"
 
-	var Request model.Portfolio
+	var Request model.CreatePortfolioRequest
 
 	err := ctx.Bind(&Request)
 	if err != nil {
 		logger.Error("failed to bind request", mark, zap.Error(err))
-		return utils.Response(ctx, http.StatusBadRequest, "bad request 123", err.Error())
+		return utils.Response(ctx, http.StatusBadRequest, "failed to create portfolio", err.Error())
 	}
-	err = p.svc.Portfolio.CreatePortfolio(ctx.Request().Context(), &Request)
+	ID, err := p.svc.Portfolio.CreatePortfolio(ctx.Request().Context(), &Request)
 	if err != nil {
 		logger.Error("failed to create portfolio", mark, zap.Error(err))
-		return utils.Response(ctx, http.StatusBadRequest, "bad request 321", err.Error())
+		return utils.Response(ctx, http.StatusBadRequest, "failed to create portfolio", err.Error())
 	}
 
-	return utils.Response(ctx, http.StatusOK, "success", "portfolio created")
+	return utils.Response(ctx, http.StatusOK, utils.SuccessMessage, ID)
 }

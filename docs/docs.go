@@ -16,7 +16,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/create-portfolio": {
-            "get": {
+            "post": {
                 "security": [
                     {
                         "TGWebAppToken": []
@@ -41,7 +41,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CreatePortfolioSchema"
+                            "$ref": "#/definitions/model.CreatePortfolioRequest"
                         }
                     }
                 ],
@@ -49,13 +49,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.CreatePortfolio"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     }
                 }
@@ -87,7 +87,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.DeletePortfolioSchema"
+                            "$ref": "#/definitions/model.DeletePortfolioRequest"
                         }
                     }
                 ],
@@ -95,13 +95,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     }
                 }
@@ -138,16 +138,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.PortfolioResponse"
-                            }
+                            "$ref": "#/definitions/schema.GetPortfolios"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     }
                 }
@@ -220,7 +217,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdatePortfolioSchema"
+                            "$ref": "#/definitions/model.UpdatePortfolioRequest"
                         }
                     }
                 ],
@@ -228,13 +225,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Body"
+                            "$ref": "#/definitions/schema.NoData"
                         }
                     }
                 }
@@ -242,7 +239,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.CreatePortfolioSchema": {
+        "model.CreatePortfolioRequest": {
             "type": "object",
             "properties": {
                 "name": {
@@ -255,7 +252,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.DeletePortfolioSchema": {
+        "model.DeletePortfolioRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -268,27 +265,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.PortfolioResponse": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "profit": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.UpdatePortfolioSchema": {
+        "model.UpdatePortfolioRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -330,12 +307,100 @@ const docTemplate = `{
                 }
             }
         },
+        "schema.CreatePortfolio": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "request": {
+                    "type": "string",
+                    "example": "/api/v1/endpoint"
+                },
+                "time": {
+                    "type": "string",
+                    "example": "2023-08-01T00:00:00Z"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "schema.GetPortfolios": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schema.Portfolio"
+                    }
+                },
+                "request": {
+                    "type": "string",
+                    "example": "/api/v1/endpoint"
+                },
+                "time": {
+                    "type": "string",
+                    "example": "2023-08-01T00:00:00Z"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "schema.NoData": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "example": "status message"
+                },
+                "request": {
+                    "type": "string",
+                    "example": "/api/v1/endpoint"
+                },
+                "time": {
+                    "type": "string",
+                    "example": "2023-08-01T00:00:00Z"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "schema.Portfolio": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-08-01T00:00:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Portfolio"
+                },
+                "profit": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-08-01T00:00:00Z"
+                }
+            }
+        },
         "utils.Body": {
             "type": "object",
             "properties": {
-                "detail": {
-                    "type": "string"
-                },
+                "data": {},
                 "request": {
                     "type": "string"
                 },

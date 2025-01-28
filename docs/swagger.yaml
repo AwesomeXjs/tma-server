@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  model.CreatePortfolioSchema:
+  model.CreatePortfolioRequest:
     properties:
       name:
         example: Portfolio
@@ -9,7 +9,7 @@ definitions:
         example: 518774723
         type: integer
     type: object
-  model.DeletePortfolioSchema:
+  model.DeletePortfolioRequest:
     properties:
       id:
         example: 1
@@ -18,20 +18,7 @@ definitions:
         example: 518774723
         type: integer
     type: object
-  model.PortfolioResponse:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      profit:
-        type: integer
-      updated_at:
-        type: string
-    type: object
-  model.UpdatePortfolioSchema:
+  model.UpdatePortfolioRequest:
     properties:
       id:
         example: 1
@@ -61,10 +48,73 @@ definitions:
         example: username
         type: string
     type: object
+  schema.CreatePortfolio:
+    properties:
+      data:
+        example: 1
+        type: integer
+      request:
+        example: /api/v1/endpoint
+        type: string
+      time:
+        example: "2023-08-01T00:00:00Z"
+        type: string
+      title:
+        example: success
+        type: string
+    type: object
+  schema.GetPortfolios:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schema.Portfolio'
+        type: array
+      request:
+        example: /api/v1/endpoint
+        type: string
+      time:
+        example: "2023-08-01T00:00:00Z"
+        type: string
+      title:
+        example: success
+        type: string
+    type: object
+  schema.NoData:
+    properties:
+      data:
+        example: status message
+        type: string
+      request:
+        example: /api/v1/endpoint
+        type: string
+      time:
+        example: "2023-08-01T00:00:00Z"
+        type: string
+      title:
+        example: success
+        type: string
+    type: object
+  schema.Portfolio:
+    properties:
+      created_at:
+        example: "2023-08-01T00:00:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Portfolio
+        type: string
+      profit:
+        example: 1000
+        type: number
+      updated_at:
+        example: "2023-08-01T00:00:00Z"
+        type: string
+    type: object
   utils.Body:
     properties:
-      detail:
-        type: string
+      data: {}
       request:
         type: string
       time:
@@ -80,7 +130,7 @@ info:
   version: "1.0"
 paths:
   /api/v1/create-portfolio:
-    get:
+    post:
       consumes:
       - application/json
       description: create portfolio for user
@@ -91,18 +141,18 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.CreatePortfolioSchema'
+          $ref: '#/definitions/model.CreatePortfolioRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.CreatePortfolio'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
       security:
       - TGWebAppToken: []
       summary: CreatePortfolio
@@ -120,18 +170,18 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.DeletePortfolioSchema'
+          $ref: '#/definitions/model.DeletePortfolioRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
       security:
       - TGWebAppToken: []
       summary: DeletePortfolio
@@ -154,13 +204,11 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.PortfolioResponse'
-            type: array
+            $ref: '#/definitions/schema.GetPortfolios'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
       security:
       - TGWebAppToken: []
       summary: GetPortfolios
@@ -205,18 +253,18 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/model.UpdatePortfolioSchema'
+          $ref: '#/definitions/model.UpdatePortfolioRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utils.Body'
+            $ref: '#/definitions/schema.NoData'
       security:
       - TGWebAppToken: []
       summary: UpdatePortfolio

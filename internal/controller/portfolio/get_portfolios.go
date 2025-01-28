@@ -19,8 +19,8 @@ import (
 // @Param id path int false "owner id"
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.GetPortfoliosResponse
-// @Failure 400 {object} utils.Body
+// @Success 200 {object} schema.GetPortfolios
+// @Failure 400 {object} schema.NoData
 // @Router /api/v1/portfolios/{id} [get]
 func (p *Portfolio) GetPortfolios(ctx echo.Context) error {
 
@@ -28,7 +28,7 @@ func (p *Portfolio) GetPortfolios(ctx echo.Context) error {
 
 	id := ctx.Param("id")
 
-	if id == "" {
+	if len(id) == 0 {
 		return utils.Response(ctx, http.StatusBadRequest, "bad request", "invalid id")
 	}
 
@@ -43,5 +43,5 @@ func (p *Portfolio) GetPortfolios(ctx echo.Context) error {
 		logger.Error("failed to get portfolios", mark, zap.Error(err))
 		return utils.Response(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
-	return ctx.JSON(http.StatusOK, portfolios)
+	return utils.Response(ctx, http.StatusOK, utils.SuccessMessage, portfolios)
 }

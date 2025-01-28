@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (p *Portfolio) DeletePortfolio(ctx context.Context, portfolio model.DeletePortfolioSchema) error {
+func (p *Portfolio) DeletePortfolio(ctx context.Context, portfolio model.DeletePortfolioRequest) error {
 
 	const mark = "Repository.Portfolio.DeletePortfolio"
 

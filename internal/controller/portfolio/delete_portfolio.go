@@ -18,15 +18,15 @@ import (
 // @ID delete-portfolio
 // @Accept  json
 // @Produce  json
-// @Param input body model.DeletePortfolioSchema true "portfolio info"
-// @Success 200 {object} utils.Body
-// @Failure 400 {object} utils.Body
+// @Param input body model.DeletePortfolioRequest true "portfolio info"
+// @Success 200 {object} schema.NoData
+// @Failure 400 {object} schema.NoData
 // @Router /api/v1/delete-portfolio [delete]
 func (p *Portfolio) DeletePortfolio(ctx echo.Context) error {
 
 	const mark = "Controller.Portfolio.DeletePortfolio"
 
-	var Request model.DeletePortfolioSchema
+	var Request model.DeletePortfolioRequest
 	err := ctx.Bind(&Request)
 	if err != nil {
 		logger.Error("failed to bind request", mark, zap.Error(err))
@@ -39,5 +39,5 @@ func (p *Portfolio) DeletePortfolio(ctx echo.Context) error {
 		return utils.Response(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
 
-	return utils.Response(ctx, http.StatusOK, "success", "portfolio deleted")
+	return utils.Response(ctx, http.StatusOK, utils.SuccessMessage, "portfolio deleted")
 }

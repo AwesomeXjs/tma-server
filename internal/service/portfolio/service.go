@@ -8,10 +8,10 @@ import (
 )
 
 type IPortfolio interface {
-	CreatePortfolio(ctx context.Context, user *model.Portfolio) error
+	CreatePortfolio(ctx context.Context, data *model.CreatePortfolioRequest) (int, error)
 	GetPortfolios(ctx context.Context, ownerId int) (model.GetPortfoliosResponse, error)
-	UpdatePortfolio(ctx context.Context, data model.UpdatePortfolioSchema) error
-	DeletePortfolio(ctx context.Context, portfolio model.DeletePortfolioSchema) error
+	UpdatePortfolio(ctx context.Context, data model.UpdatePortfolioRequest) error
+	DeletePortfolio(ctx context.Context, portfolio model.DeletePortfolioRequest) error
 }
 
 type Portfolio struct {

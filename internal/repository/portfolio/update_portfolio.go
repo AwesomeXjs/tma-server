@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (p *Portfolio) UpdatePortfolio(ctx context.Context, data model.UpdatePortfolioSchema) error {
+func (p *Portfolio) UpdatePortfolio(ctx context.Context, data model.UpdatePortfolioRequest) error {
 
 	const mark = "Repository.Portfolio.UpdatePortfolio"
 

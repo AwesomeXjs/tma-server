@@ -18,15 +18,15 @@ import (
 // @ID update-portfolio
 // @Accept  json
 // @Produce  json
-// @Param input body model.UpdatePortfolioSchema true "portfolio info"
-// @Success 200 {object} utils.Body
-// @Failure 400 {object} utils.Body
+// @Param input body model.UpdatePortfolioRequest true "portfolio info"
+// @Success 200 {object} schema.NoData
+// @Failure 400 {object} schema.NoData
 // @Router /api/v1/update-portfolio [patch]
 func (p *Portfolio) UpdatePortfolio(ctx echo.Context) error {
 
 	const mark = "Controller.Portfolio.UpdatePortfolio"
 
-	var Request model.UpdatePortfolioSchema
+	var Request model.UpdatePortfolioRequest
 	err := ctx.Bind(&Request)
 	if err != nil {
 		logger.Error("failed to bind request", mark, zap.Error(err))
@@ -36,8 +36,8 @@ func (p *Portfolio) UpdatePortfolio(ctx echo.Context) error {
 	err = p.svc.Portfolio.UpdatePortfolio(ctx.Request().Context(), Request)
 	if err != nil {
 		logger.Error("failed to update portfolio", mark, zap.Error(err))
-		return utils.Response(ctx, http.StatusBadRequest, "bad request", err.Error())
+		return utils.Response(ctx, http.StatusBadRequest, "failed to update", err.Error())
 	}
 
-	return utils.Response(ctx, http.StatusOK, "success", "portfolio updated")
+	return utils.Response(ctx, http.StatusOK, utils.SuccessMessage, "portfolio updated")
 }
