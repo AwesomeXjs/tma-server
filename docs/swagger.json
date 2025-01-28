@@ -10,7 +10,12 @@
     "basePath": "/",
     "paths": {
         "/api/v1/create-portfolio": {
-            "post": {
+            "get": {
+                "security": [
+                    {
+                        "TGWebAppToken": []
+                    }
+                ],
                 "description": "create portfolio for user",
                 "consumes": [
                     "application/json"
@@ -38,13 +43,105 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Body"
+                            "$ref": "#/definitions/utils.Body"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Body"
+                            "$ref": "#/definitions/utils.Body"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/delete-portfolio": {
+            "delete": {
+                "security": [
+                    {
+                        "TGWebAppToken": []
+                    }
+                ],
+                "description": "delete portfolio",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Portfolio"
+                ],
+                "summary": "DeletePortfolio",
+                "operationId": "delete-portfolio",
+                "parameters": [
+                    {
+                        "description": "portfolio info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DeletePortfolioSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Body"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Body"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/portfolios/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "TGWebAppToken": []
+                    }
+                ],
+                "description": "get portfolios",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Portfolio"
+                ],
+                "summary": "GetPortfolios",
+                "operationId": "get-portfolio",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "owner id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PortfolioResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Body"
                         }
                     }
                 }
@@ -79,13 +176,59 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Body"
+                            "$ref": "#/definitions/utils.Body"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Body"
+                            "$ref": "#/definitions/utils.Body"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/update-portfolio": {
+            "patch": {
+                "security": [
+                    {
+                        "TGWebAppToken": []
+                    }
+                ],
+                "description": "update portfolio",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Portfolio"
+                ],
+                "summary": "UpdatePortfolio",
+                "operationId": "update-portfolio",
+                "parameters": [
+                    {
+                        "description": "portfolio info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdatePortfolioSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Body"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Body"
                         }
                     }
                 }
@@ -106,27 +249,82 @@
                 }
             }
         },
-        "model.User": {
+        "model.DeletePortfolioSchema": {
             "type": "object",
             "properties": {
-                "firstName": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "ownerID": {
+                    "type": "integer",
+                    "example": 518774723
+                }
+            }
+        },
+        "model.PortfolioResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "isPremium": {
-                    "type": "integer"
-                },
-                "lastName": {
+                "name": {
                     "type": "string"
                 },
-                "username": {
+                "profit": {
+                    "type": "integer"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
         },
-        "response.Body": {
+        "model.UpdatePortfolioSchema": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "new_name": {
+                    "type": "string",
+                    "example": "Portfolio"
+                },
+                "owner_id": {
+                    "type": "integer",
+                    "example": 518774723
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "firstName": {
+                    "type": "string",
+                    "example": "firstName"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 51
+                },
+                "isPremium": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "lastName": {
+                    "type": "string",
+                    "example": "lastName"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "username"
+                }
+            }
+        },
+        "utils.Body": {
             "type": "object",
             "properties": {
                 "detail": {
@@ -145,9 +343,9 @@
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "TGWebAppToken": {
             "type": "apiKey",
-            "name": "TMA",
+            "name": "TGWebAppToken",
             "in": "header"
         }
     }

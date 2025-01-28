@@ -3,13 +3,15 @@ package middlewares
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
+	"net/http"
+	"strings"
+
 	"github.com/AwesomeXjs/tma-server/internal/utils"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 // TelegramValidationMiddleware возвращает middleware для проверки подписи Telegram Mini App
@@ -17,29 +19,40 @@ func TelegramValidationMiddleware(botToken string) echo.MiddlewareFunc {
 	const mark = "Middleware.TelegramValidation"
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			// Получаем тело запроса
-			var dataUrl []string
-			if err := c.Bind(&dataUrl); err != nil {
-				// Логируем ошибку и возвращаем ошибку в ответ
-				logger.Error("Error binding body", mark, zap.Error(err))
-				return utils.Response(c, http.StatusBadRequest, "bad request", err.Error())
+			authHeader := c.Request().Header.Get("TGWebAppToken")
+			if authHeader == "" {
+				logger.Error("Missing 'TGWebAppToken' header", mark)
+				return utils.Response(c, http.StatusUnauthorized, "unauthorized", "missing authorization header")
 			}
 
-			// Ожидаем, что первый элемент — это строка данных, а второй — хэш
-			if len(dataUrl) != 2 {
-				// Логируем ошибку, если формат данных неверный
-				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid data format")
+			parts := strings.SplitN(authHeader, " ", 2)
+			if len(parts) != 2 || parts[0] != "TGWebApp" {
+				logger.Error("Invalid Authorization format", mark)
+				return utils.Response(c, http.StatusUnauthorized, "unauthorized", "invalid authorization format")
 			}
 
-			// Извлекаем строку данных и хэш
-			dataCheckString := dataUrl[0]
-			receivedHash := dataUrl[1]
+			decoded, err := base64.StdEncoding.DecodeString(parts[1])
+			if err != nil {
+				logger.Error("Base64 decode error", mark, zap.Error(err))
+				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid base64 encoding")
+			}
+
+			// Исправленное разделение данных
+			lastColonIndex := strings.LastIndex(string(decoded), ":")
+			if lastColonIndex == -1 {
+				logger.Error("Invalid auth data format", mark)
+				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid auth data format")
+			}
+
+			dataCheckString := string(decoded)[:lastColonIndex]
+			receivedHash := string(decoded)[lastColonIndex+1:]
+			
 			// Проверяем хэш
 			if !validateHash(dataCheckString, receivedHash, botToken) {
-				return utils.Response(c, http.StatusBadRequest, "bad request", "invalid hash")
+				logger.Warn("Invalid hash received", mark)
+				return utils.Response(c, http.StatusForbidden, "forbidden", "invalid hash")
 			}
 
-			// Если хэш валиден, продолжаем выполнение
 			return next(c)
 		}
 	}

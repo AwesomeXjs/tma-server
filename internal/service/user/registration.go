@@ -6,7 +6,7 @@ import (
 )
 
 func (u *User) Registration(ctx context.Context, user *model.User) error {
-	const mark = "Service.Registration"
+	const mark = "Service.User.Registration"
 
 	return u.repo.User.Registration(ctx, user)
 }

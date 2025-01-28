@@ -4,6 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/AwesomeXjs/tma-server/internal/middlewares"
 	"github.com/AwesomeXjs/tma-server/pkg/closer"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
@@ -11,7 +13,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/zap"
-	"os"
 )
 
 const (
@@ -107,6 +108,7 @@ func (app *App) InitEchoServer(_ context.Context) error {
 			echo.HeaderAuthorization,
 			echo.HeaderAccessControlRequestHeaders,
 			echo.HeaderAccessControlAllowOrigin,
+			"TGWebAppToken",
 		}, // Allowed headers for CORS
 	}))
 	return nil

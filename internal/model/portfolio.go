@@ -20,14 +20,25 @@ type CreatePortfolioSchema struct {
 }
 
 type DeletePortfolioSchema struct {
-	ID int `json:"id" db:"id" example:"1"`
+	ID      int `json:"id" db:"id" example:"1"`
+	OwnerID int `json:"ownerID" db:"owner_id"  example:"518774723"`
 }
 
 type UpdatePortfolioSchema struct {
 	ID      int    `json:"id" db:"id" example:"1"`
+	OwnerID int    `json:"owner_id" db:"owner_id" example:"518774723"`
 	NewName string `json:"new_name" db:"name" example:"Portfolio"`
 }
 
 type GetPortfoliosSchema struct {
-	OwnerID int
+	OwnerID int `json:"owner_id" db:"owner_id" example:"518774723"`
 }
+
+type PortfolioResponse struct {
+	ID        int       `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	Profit    int       `json:"profit" db:"profit"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+}
+type GetPortfoliosResponse []PortfolioResponse

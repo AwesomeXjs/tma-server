@@ -1,13 +1,14 @@
 package user
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/AwesomeXjs/tma-server/internal/model"
 	"github.com/AwesomeXjs/tma-server/internal/utils"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
-	"net/http"
-	"strings"
 )
 
 // Registration - Registration
@@ -18,11 +19,11 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param input body model.User true "user info"
-// @Success 200 {object} response.Body
-// @Failure 400 {object} response.Body
+// @Success 200 {object} utils.Body
+// @Failure 400 {object} utils.Body
 // @Router /api/v1/registration [post]
 func (u *User) Registration(ctx echo.Context) error {
-	const mark = "Controller.Registration"
+	const mark = "Controller.User.Registration"
 
 	var User model.User
 	err := ctx.Bind(&User)

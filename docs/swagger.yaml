@@ -9,20 +9,59 @@ definitions:
         example: 518774723
         type: integer
     type: object
-  model.User:
+  model.DeletePortfolioSchema:
     properties:
-      firstName:
+      id:
+        example: 1
+        type: integer
+      ownerID:
+        example: 518774723
+        type: integer
+    type: object
+  model.PortfolioResponse:
+    properties:
+      created_at:
         type: string
       id:
         type: integer
-      isPremium:
-        type: integer
-      lastName:
+      name:
         type: string
-      username:
+      profit:
+        type: integer
+      updated_at:
         type: string
     type: object
-  response.Body:
+  model.UpdatePortfolioSchema:
+    properties:
+      id:
+        example: 1
+        type: integer
+      new_name:
+        example: Portfolio
+        type: string
+      owner_id:
+        example: 518774723
+        type: integer
+    type: object
+  model.User:
+    properties:
+      firstName:
+        example: firstName
+        type: string
+      id:
+        example: 51
+        type: integer
+      isPremium:
+        example: 0
+        type: integer
+      lastName:
+        example: lastName
+        type: string
+      username:
+        example: username
+        type: string
+    type: object
+  utils.Body:
     properties:
       detail:
         type: string
@@ -41,7 +80,7 @@ info:
   version: "1.0"
 paths:
   /api/v1/create-portfolio:
-    post:
+    get:
       consumes:
       - application/json
       description: create portfolio for user
@@ -59,12 +98,72 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Body'
+            $ref: '#/definitions/utils.Body'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Body'
+            $ref: '#/definitions/utils.Body'
+      security:
+      - TGWebAppToken: []
       summary: CreatePortfolio
+      tags:
+      - Portfolio
+  /api/v1/delete-portfolio:
+    delete:
+      consumes:
+      - application/json
+      description: delete portfolio
+      operationId: delete-portfolio
+      parameters:
+      - description: portfolio info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.DeletePortfolioSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Body'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Body'
+      security:
+      - TGWebAppToken: []
+      summary: DeletePortfolio
+      tags:
+      - Portfolio
+  /api/v1/portfolios/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get portfolios
+      operationId: get-portfolio
+      parameters:
+      - description: owner id
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PortfolioResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Body'
+      security:
+      - TGWebAppToken: []
+      summary: GetPortfolios
       tags:
       - Portfolio
   /api/v1/registration:
@@ -86,17 +185,46 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Body'
+            $ref: '#/definitions/utils.Body'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Body'
+            $ref: '#/definitions/utils.Body'
       summary: Registration
       tags:
       - User
+  /api/v1/update-portfolio:
+    patch:
+      consumes:
+      - application/json
+      description: update portfolio
+      operationId: update-portfolio
+      parameters:
+      - description: portfolio info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdatePortfolioSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Body'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Body'
+      security:
+      - TGWebAppToken: []
+      summary: UpdatePortfolio
+      tags:
+      - Portfolio
 securityDefinitions:
-  ApiKeyAuth:
+  TGWebAppToken:
     in: header
-    name: TMA
+    name: TGWebAppToken
     type: apiKey
 swagger: "2.0"

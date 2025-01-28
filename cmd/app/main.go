@@ -17,9 +17,9 @@ const (
 // @description API Server for Authentication
 // @host localhost:8080
 // @BasePath /
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey TGWebAppToken
 // @in header
-// @name TMA
+// @name TGWebAppToken
 func main() {
 	ctx := context.Background()
 

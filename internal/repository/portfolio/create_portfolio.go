@@ -2,6 +2,8 @@ package portfolio
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/AwesomeXjs/tma-server/internal/model"
 	"github.com/AwesomeXjs/tma-server/pkg/dbClient"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
@@ -10,8 +12,9 @@ import (
 )
 
 func (p *Portfolio) CreatePortfolio(ctx context.Context, user *model.Portfolio) error {
-	const mark = "Repository.CreatePortfolio"
+	const mark = "Repository.Portfolio.CreatePortfolio"
 
+	fmt.Println(user)
 	builderInsert := squirrel.Insert(TablePortfolios).
 		PlaceholderFormat(squirrel.Dollar).
 		Columns(ColumnName, ColumnOwnerID).

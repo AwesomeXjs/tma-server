@@ -1,8 +1,9 @@
 package portfolio
 
 import (
-	"github.com/AwesomeXjs/tma-server/internal/utils"
 	"net/http"
+
+	"github.com/AwesomeXjs/tma-server/internal/utils"
 
 	"github.com/AwesomeXjs/tma-server/internal/model"
 	"github.com/AwesomeXjs/tma-server/pkg/logger"
@@ -12,17 +13,18 @@ import (
 
 // CreatePortfolio - CreatePortfolio
 // @Summary CreatePortfolio
+// @Security TGWebAppToken
 // @Tags Portfolio
 // @Description create portfolio for user
 // @ID create-portfolio
 // @Accept  json
 // @Produce  json
 // @Param input body model.CreatePortfolioSchema true "portfolio info"
-// @Success 200 {object} response.Body
-// @Failure 400 {object} response.Body
-// @Router /api/v1/create-portfolio [post]
+// @Success 200 {object} utils.Body
+// @Failure 400 {object} utils.Body
+// @Router /api/v1/create-portfolio [get]
 func (p *Portfolio) CreatePortfolio(ctx echo.Context) error {
-	const mark = "Controller.CreatePortfolio"
+	const mark = "Controller.Portfolio.CreatePortfolio"
 
 	var Request model.Portfolio
 
